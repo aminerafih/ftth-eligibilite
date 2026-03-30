@@ -10,6 +10,7 @@ import com.orange.maroc.fttheligibilite.repository.ImmeubleRepository;
 import com.orange.maroc.fttheligibilite.repository.OperateurRepository;
 import com.orange.maroc.fttheligibilite.repository.QuartierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
@@ -23,8 +24,13 @@ import java.util.Optional;
 @Slf4j
 public class FtthEligibiliteService {
 
-    private static final String API_BASE_URL = "http://10.127.16.23/ftth/search/nearby";
-    private static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vd3NvMi5vcmcvY2xhaW1zL3N1YnNjcmliZXIiOiJpYW0iLCJodHRwOi8vd3NvMi5vcmcvY2xhaW1zL2FwcGxpY2F0aW9ubmFtZSI6IkRlZmF1bHRBcHBsaWNhdGlvbiJ9.3GWUkQdW-rg5ikjwZERUcUKVw4kk6fSffNWjwiVkMx8";
+    // Configuration externalisée depuis application.properties
+    @Value("${api.base.url}")
+    private String apiBaseUrl;
+
+    @Value("${api.jwt.token}")
+    private String jwtToken;
+
     private static final double RAYON_INWI_KM = 0.1;
 
     @Autowired
@@ -77,7 +83,7 @@ public class FtthEligibiliteService {
 
     private OrangeResponseDTO appelApiOrange(Double latitude, Double longitude) {
         try {
-            String url = API_BASE_URL + "/" + latitude + "," + longitude;
+            String url = apiBaseUrl + "/" + latitude + "," + longitude;
             log.info("URL Orange : {}", url);
 
             HttpHeaders headers = creerHeaders();
@@ -104,7 +110,7 @@ public class FtthEligibiliteService {
 
     private OrangeResponseDTO appelApiInwi(Double latitude, Double longitude) {
         try {
-            String url = API_BASE_URL + "/" + latitude + "," + longitude + "?operator=inwi";
+            String url = apiBaseUrl + "/" + latitude + "," + longitude + "?operator=inwi";
             log.info("URL Inwi : {}", url);
 
             HttpHeaders headers = crierHeaders();
@@ -133,7 +139,7 @@ public class FtthEligibiliteService {
 
     private HttpHeaders crierHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-JWT-Assertion", JWT_TOKEN);
+        headers.set("X-JWT-Assertion", jwtToken);
         headers.set("X-OAPI-Application-Name", "inwi");
         headers.set("Content-Type", "application/json");
         return headers;
@@ -141,7 +147,7 @@ public class FtthEligibiliteService {
 
     private HttpHeaders creerHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-JWT-Assertion", JWT_TOKEN);
+        headers.set("X-JWT-Assertion", jwtToken);
         headers.set("X-OAPI-Application-Name", "inwi");
         headers.set("Content-Type", "application/json");
         return headers;

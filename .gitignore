@@ -31,3 +31,12 @@ build/
 
 ### VS Code ###
 .vscode/
+# ==========================================
+# Configuration files with sensitive data
+# ==========================================
+application.properties
+application-secrets.properties
+application-dev.properties
+.env
+.env.local
+*.log
